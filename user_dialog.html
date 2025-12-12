@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>User Management Dashboard</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        padding: 30px;
+        background: #f5f5f5;
+    }
+    h2 {
+        margin-bottom: 15px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 6px;
+        overflow: hidden;
+    }
+
+    th, td {
+        padding: 12px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    th {
+        background: #333;
+        color: white;
+    }
+
+    tr:last-child td {
+        border-bottom: none;
+    }
+
+    #addUserBtn {
+        margin-top: 20px;
+        padding: 10px 16px;
+        background: #0078ff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    #addUserBtn:hover {
+        background: #005fcc;
+    }
+
+    #modalBackground {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.6);
+        display: none;
+        justify-content: center;
+        align-items: center;
+    }
+    #modalBox {
+        width: 300px;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+    }
+    #modalBox h3 {
+        margin-top: 0;
+    }
+
+    .inputRow {
+        margin-bottom: 10px;
+    }
+
+    input {
+        width: 100%;
+        padding: 6px;
+    }
+
+    #createBtn {
+        width: 100%;
+        padding: 10px;
+        background: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    #createBtn:hover {
+        background: #1e7e34;
+    }
+
+    #closeBtn {
+        float: right;
+        cursor: pointer;
+        font-weight: bold;
+    }
+</style>
+</head>
+
+<body>
+
+<h2>User Management Dashboard</h2>
+
+<table id="userTable">
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Full Name</th>
+            <th>Email</th>
+        </tr>
+    </thead>
+    <tbody id="userBody">
+    </tbody>
+</table>
+
+<button id="addUserBtn">Add New User</button>
+
+<div id="modalBackground">
+    <div id="modalBox">
+        <span id="closeBtn">X</span>
+        <h3>Add New User</h3>
+
+        <div class="inputRow">
+            <label>Username</label>
+            <input type="text" id="usernameInput">
+        </div>
+
+        <div class="inputRow">
+            <label>Full Name</label>
+            <input type="text" id="fullnameInput">
+        </div>
+
+        <div class="inputRow">
+            <label>Email</label>
+            <input type="email" id="emailInput">
+        </div>
+
+        <button id="createBtn">Create User</button>
+    </div>
+</div>
+
+<script>
+    const addUserBtn = document.getElementById("addUserBtn");
+    const modalBackground = document.getElementById("modalBackground");
+    const closeBtn = document.getElementById("closeBtn");
+    const createBtn = document.getElementById("createBtn");
+
+    const userBody = document.getElementById("userBody");
+
+    const usernameInput = document.getElementById("usernameInput");
+    const fullnameInput = document.getElementById("fullnameInput");
+    const emailInput = document.getElementById("emailInput");
+
+    addUserBtn.addEventListener("click", () => {
+        modalBackground.style.display = "flex";
+    });
+
+    closeBtn.addEventListener("click", () => {
+        modalBackground.style.display = "none";
+        clearForm();
+    });
+
+    createBtn.addEventListener("click", () => {
+        const username = usernameInput.value.trim();
+        const fullname = fullnameInput.value.trim();
+        const email = emailInput.value.trim();
+
+        if (!username || !fullname || !email) {
+            alert("Please fill in all fields.");
+            return;
+        }
+
+        const row = document.createElement("tr");
+        row.innerHTML = `<td>${username}</td><td>${fullname}</td><td>${email}</td>`;
+        userBody.appendChild(row);
+
+        clearForm();
+
+        modalBackground.style.display = "none";
+    });
+
+    function clearForm() {
+        usernameInput.value = "";
+        fullnameInput.value = "";
+        emailInput.value = "";
+    }
+</script>
+
+</body>
+</html>

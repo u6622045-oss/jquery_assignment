@@ -11,7 +11,6 @@
     th, td { border: 1px solid #000; padding: 8px; text-align: left; }
     button { margin-top: 15px; padding: 8px 12px; }
 
-    /* Modal */
     .modal-bg {
       position: fixed;
       top: 0; left: 0;
@@ -58,7 +57,6 @@
 
   <button id="toggleDialog">Add New User</button>
 
-  <!-- Modal Dialog -->
   <div class="modal-bg" id="modalBg">
     <div class="modal">
       <span class="close-btn" id="closeModal">X</span>
@@ -90,7 +88,6 @@
   const submitUser = document.getElementById('submitUser');
   const usersTable = document.querySelector('#usersTable tbody');
 
-  // Toggle modal visibility
   toggleDialog.addEventListener('click', () => {
     modalBg.style.display = 'flex';
   });
@@ -116,15 +113,12 @@
       return;
     }
 
-    // Add new user to table
     const row = document.createElement('tr');
     row.innerHTML = `<td>${username}</td><td>${fullname}</td><td>${email}</td>`;
     usersTable.appendChild(row);
 
-    // Clear form
     clearForm();
 
-    // Close modal
     modalBg.style.display = 'none';
   });
 </script>
