@@ -1,190 +1,148 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>User Management Dashboard</title>
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        padding: 30px;
-        background: #f5f5f5;
-    }
-    h2 {
-        margin-bottom: 15px;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Management Dashboard</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    #userList { margin-bottom: 20px; }
+    table { width: 100%; border-collapse: collapse; background: #fff; }
+    th, td { border: 1px solid #000; padding: 8px; text-align: left; }
+    th { background: #eee; }
+
+    button { 
+      margin-top: 15px; 
+      padding: 8px 12px; 
+      cursor: pointer; 
     }
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        background: white;
-        border-radius: 6px;
-        overflow: hidden;
+    /* Modal */
+    .modal-bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
     }
-
-    th, td {
-        padding: 12px;
-        border-bottom: 1px solid #ddd;
+    .modal {
+      background: white;
+      padding: 20px;
+      width: 300px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
     }
-
-    th {
-        background: #333;
-        color: white;
+    .close-btn {
+      float: right;
+      cursor: pointer;
+      font-weight: bold;
     }
-
-    tr:last-child td {
-        border-bottom: none;
-    }
-
-    #addUserBtn {
-        margin-top: 20px;
-        padding: 10px 16px;
-        background: #0078ff;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-
-    #addUserBtn:hover {
-        background: #005fcc;
-    }
-
-    #modalBackground {
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.6);
-        display: none;
-        justify-content: center;
-        align-items: center;
-    }
-    #modalBox {
-        width: 300px;
-        background: white;
-        padding: 20px;
-        border-radius: 8px;
-    }
-    #modalBox h3 {
-        margin-top: 0;
-    }
-
-    .inputRow {
-        margin-bottom: 10px;
-    }
-
-    input {
-        width: 100%;
-        padding: 6px;
-    }
-
-    #createBtn {
-        width: 100%;
-        padding: 10px;
-        background: #28a745;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-
-    #createBtn:hover {
-        background: #1e7e34;
-    }
-
-    #closeBtn {
-        float: right;
-        cursor: pointer;
-        font-weight: bold;
-    }
-</style>
+    .input-row { margin-bottom: 10px; }
+    label { font-size: 0.9rem; display:block; margin-bottom: 4px; }
+    input { width: 100%; padding: 6px; }
+  </style>
 </head>
-
 <body>
 
-<h2>User Management Dashboard</h2>
+  <h2>User Management Dashboard</h2>
 
-<table id="userTable">
-    <thead>
+  <div id="userList">
+    <h3>Existing Users</h3>
+    <table id="usersTable">
+      <thead>
         <tr>
-            <th>Username</th>
-            <th>Full Name</th>
-            <th>Email</th>
+          <th>Username</th>
+          <th>Full Name</th>
+          <th>Email</th>
         </tr>
-    </thead>
-    <tbody id="userBody">
-    </tbody>
-</table>
+      </thead>
+      <tbody>
+        <!-- Users will appear here -->
+      </tbody>
+    </table>
+  </div>
 
-<button id="addUserBtn">Add New User</button>
+  <button id="toggleDialog">Add New User</button>
 
-<div id="modalBackground">
-    <div id="modalBox">
-        <span id="closeBtn">X</span>
-        <h3>Add New User</h3>
+  <!-- Modal Dialog -->
+  <div class="modal-bg" id="modalBg">
+    <div class="modal">
+      <span class="close-btn" id="closeModal">X</span>
+      <h3>New User</h3>
 
-        <div class="inputRow">
-            <label>Username</label>
-            <input type="text" id="usernameInput">
-        </div>
+      <div class="input-row">
+        <label>Username</label>
+        <input type="text" id="username" />
+      </div>
 
-        <div class="inputRow">
-            <label>Full Name</label>
-            <input type="text" id="fullnameInput">
-        </div>
+      <div class="input-row">
+        <label>Fullname</label>
+        <input type="text" id="fullname" />
+      </div>
 
-        <div class="inputRow">
-            <label>Email</label>
-            <input type="email" id="emailInput">
-        </div>
+      <div class="input-row">
+        <label>Email</label>
+        <input type="email" id="email" />
+      </div>
 
-        <button id="createBtn">Create User</button>
+      <button id="submitUser">Create User</button>
     </div>
-</div>
+  </div>
 
 <script>
-    const addUserBtn = document.getElementById("addUserBtn");
-    const modalBackground = document.getElementById("modalBackground");
-    const closeBtn = document.getElementById("closeBtn");
-    const createBtn = document.getElementById("createBtn");
+  const toggleDialog = document.getElementById('toggleDialog');
+  const modalBg = document.getElementById('modalBg');
+  const closeModal = document.getElementById('closeModal');
+  const submitUser = document.getElementById('submitUser');
+  const usersTable = document.querySelector('#usersTable tbody');
 
-    const userBody = document.getElementById("userBody");
+  // Open modal
+  toggleDialog.addEventListener('click', () => {
+    modalBg.style.display = 'flex';
+  });
 
-    const usernameInput = document.getElementById("usernameInput");
-    const fullnameInput = document.getElementById("fullnameInput");
-    const emailInput = document.getElementById("emailInput");
+  // Close modal
+  closeModal.addEventListener('click', () => {
+    modalBg.style.display = 'none';
+    clearForm();
+  });
 
-    addUserBtn.addEventListener("click", () => {
-        modalBackground.style.display = "flex";
-    });
+  // Clear form function
+  function clearForm() {
+    document.getElementById('username').value = '';
+    document.getElementById('fullname').value = '';
+    document.getElementById('email').value = '';
+  }
 
-    closeBtn.addEventListener("click", () => {
-        modalBackground.style.display = "none";
-        clearForm();
-    });
+  // Submit new user
+  submitUser.addEventListener('click', () => {
+    const username = document.getElementById('username').value.trim();
+    const fullname = document.getElementById('fullname').value.trim();
+    const email = document.getElementById('email').value.trim();
 
-    createBtn.addEventListener("click", () => {
-        const username = usernameInput.value.trim();
-        const fullname = fullnameInput.value.trim();
-        const email = emailInput.value.trim();
-
-        if (!username || !fullname || !email) {
-            alert("Please fill in all fields.");
-            return;
-        }
-
-        const row = document.createElement("tr");
-        row.innerHTML = `<td>${username}</td><td>${fullname}</td><td>${email}</td>`;
-        userBody.appendChild(row);
-
-        clearForm();
-
-        modalBackground.style.display = "none";
-    });
-
-    function clearForm() {
-        usernameInput.value = "";
-        fullnameInput.value = "";
-        emailInput.value = "";
+    // Validation
+    if (!username || !fullname || !email) {
+      alert('Please fill out all fields.');
+      return;
     }
+
+    // Create new table row
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${username}</td>
+      <td>${fullname}</td>
+      <td>${email}</td>
+    `;
+
+    usersTable.appendChild(row);
+
+    // Clear and close modal
+    clearForm();
+    modalBg.style.display = 'none';
+  });
 </script>
 
 </body>
